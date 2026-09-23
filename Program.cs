@@ -1,7 +1,24 @@
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
+using ecommerce.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
+var builder = WebApplication.CreateBuilder(args);
+// builder.Services.AddControllers()
+// .ConfigureApiBehaviorOptions(options =>
+// {
+//     options.SuppressModelStateInvalidFilter = true;
+// });
+
+builder.Services.AddControllers();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState.Where(e => e.Value!=null && e.Value.Errors.Count>0).
+            SelectMany(e => e.Value!.Errors.Select(x=>x.ErrorMessage)).ToList();
+            return new BadRequestObjectResult(ApiResponse<object>.ErrorResponse(errors,400,"validation Failed"));
+    };
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(); //dotnet add package Swashbuckle.AspNetCore
 var app = builder.Build();
@@ -54,7 +71,7 @@ app.UseHttpsRedirection();
 
 
 
-
+app.MapControllers();
 app.Run();
 
 
