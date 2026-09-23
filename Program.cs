@@ -1,10 +1,12 @@
 
 using ecommerce.Controllers;
+using ecommerce.Interfaces;
 using ecommerce.Services;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddScoped<CategoryService>();
+builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddScoped<ICategoryService,CategoryService>();
 // builder.Services.AddControllers()
 // .ConfigureApiBehaviorOptions(options =>
 // {

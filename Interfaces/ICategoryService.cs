@@ -4,13 +4,12 @@ namespace ecommerce.Interfaces;
 
 public interface ICategoryService
 {
-    List<CategoryReadDto> GetAllCategories(int pageNumber, int pageSize,
-    string? search=null,string? sortOrde=null);
-    CategoryReadDto? GetCategoryById(Guid categoryId);
+    List<CategoryReadDto> GetAllcategories();
+    CategoryReadDto? GetCategorieById(Guid categoryId);
 
-    CategoryReadDto CreateCategory(CategoryCreateDto categoryData);
+    CategoryReadDto CreateCategorie(CategoryCreateDto categoryData);
 
-    CategoryReadDto? UpdateCategoryById(Guid categoryId, CategoryUpdateDto categoryData);
+    CategoryReadDto? UpdateCategory(Guid id, CategoryUpdateDto categoryData);
 
-    bool DeleteCategoryById(Guid categoryId);
+    bool DeleteCategory(Guid id);
 }

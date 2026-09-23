@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ecommerce.Models;
 using ecommerce.DTOs;
 using ecommerce.Services;
+using ecommerce.Interfaces;
 namespace ecommerce.Controllers;
 
 [ApiController]
@@ -10,8 +11,8 @@ public class CategoryController : ControllerBase
 {
 
 
-    private CategoryService _categoryService;
-    public CategoryController(CategoryService categoryService)
+    private ICategoryService _categoryService;
+    public CategoryController(ICategoryService categoryService)
     {
         _categoryService = categoryService;
     }
