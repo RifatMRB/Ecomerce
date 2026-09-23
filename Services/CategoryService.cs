@@ -1,9 +1,10 @@
 namespace ecommerce.Services;
 
 using ecommerce.DTOs;
+using ecommerce.Interfaces;
 using ecommerce.Models;
 
-public class CategoryService
+public class CategoryService : ICategoryService
 {
     private static readonly List<Category> _categories = new();
     public List<CategoryReadDto> GetAllcategories()
