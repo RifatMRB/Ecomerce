@@ -1,37 +1,44 @@
 namespace ecommerce.Services;
 
 using AutoMapper;
+using ecommerce.Data;
 using ecommerce.DTOs;
 using ecommerce.Interfaces;
 using ecommerce.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class CategoryService : ICategoryService
 {
-    private static readonly List<Category> _categories = new();
+    //private static readonly List<Category> _categories = new();
+    private readonly AppDbContext _appDbContext;
     private readonly IMapper _mapper;
-    public CategoryService(IMapper mapper)
+
+    public CategoryService(AppDbContext appDbContext,IMapper mapper)
     {
-        _mapper=mapper;
+        _appDbContext = appDbContext;
+        _mapper = mapper;
     }
-    public List<CategoryReadDto> GetAllcategories()
+
+    public async Task<List<CategoryReadDto>> GetAllcategories()
     {
         // return _categories.Select(c => new CategoryReadDto
         // {
-        //     ProductId = c.ProductId,
+        //     CategoryId = c.CategoryId,
         //     Name = c.Name,
         //     Description = c.Description,
         //     CreatedAt = c.CreatedAt
         // }).ToList();
-        return _mapper.Map<List<CategoryReadDto>>(_categories);
+        var categories = await _appDbContext.Categories.ToListAsync();
+        return _mapper.Map<List<CategoryReadDto>>(categories);
     }
 
-    public CategoryReadDto? GetCategorieById(Guid categoryId)
+    public async Task<CategoryReadDto?> GetCategorieById(Guid categoryId)
     {
-        var foundCategory = _categories.FirstOrDefault(c => c.ProductId == categoryId);
+        var foundCategory = await _appDbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == categoryId);
         if(foundCategory==null) return null;
         // return  new CategoryReadDto
         // {
-        //     ProductId = foundCategory.ProductId,
+        //     CategoryId = foundCategory.CategoryId,
         //     Name = foundCategory.Name,
         //     Description = foundCategory.Description,
         //     CreatedAt = foundCategory.CreatedAt
@@ -39,24 +46,25 @@ public class CategoryService : ICategoryService
         return _mapper.Map<CategoryReadDto>(foundCategory);
     }
 
-    public CategoryReadDto CreateCategorie(CategoryCreateDto categoryData)
+    public async Task<CategoryReadDto> CreateCategorie(CategoryCreateDto categoryData)
     {
         // var newCategory = new Category
         // {
-        //     ProductId = Guid.NewGuid(),
+        //     CategoryId = Guid.NewGuid(),
         //     Name = categoryData.Name,
         //     Description = categoryData.Description,
         //     CreatedAt = DateTime.UtcNow
         // };
         var newCategory = _mapper.Map<Category>(categoryData);
-        newCategory.ProductId=Guid.NewGuid();
-        newCategory.CreatedAt=DateTime.UtcNow;
+        newCategory.CategoryId = Guid.NewGuid();
+        newCategory.CreatedAt = DateTime.UtcNow;
 
-        _categories.Add(newCategory);
+        await _appDbContext.Categories.AddAsync(newCategory);
+        await _appDbContext.SaveChangesAsync();
 
         // return new CategoryReadDto
         // {
-        //     ProductId = newCategory.ProductId,
+        //     CategoryId = newCategory.CategoryId,
         //     Name = newCategory.Name,
         //     Description=newCategory.Description,
         //     CreatedAt = newCategory.CreatedAt
@@ -64,16 +72,18 @@ public class CategoryService : ICategoryService
         return _mapper.Map<CategoryReadDto>(newCategory);
     }
 
-    public CategoryReadDto? UpdateCategory(Guid id, CategoryUpdateDto categoryData)
+    public async Task<CategoryReadDto?> UpdateCategory(Guid id, CategoryUpdateDto categoryData)
     {
-        var foundCategory = _categories.FirstOrDefault(c => c.ProductId == id);
+        var foundCategory = await _appDbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
         if (foundCategory == null) return null;
         // foundCategory.Name = categoryData.Name;
         // foundCategory.Description = categoryData.Description;
         _mapper.Map(categoryData,foundCategory);
+        _appDbContext.Categories.Update(foundCategory);
+        await _appDbContext.SaveChangesAsync();
         // return new CategoryReadDto
         // {
-        //     ProductId = foundCategory.ProductId,
+        //     CategoryId = foundCategory.CategoryId,
         //     Name = foundCategory.Name,
         //     Description=foundCategory.Description,
         //     CreatedAt = foundCategory.CreatedAt
@@ -81,11 +91,11 @@ public class CategoryService : ICategoryService
         return _mapper.Map<CategoryReadDto>(foundCategory);
     }
 
-    public bool DeleteCategory(Guid id)
+    public async Task<bool> DeleteCategory(Guid id)
     {
-        var foundCategory = _categories.FirstOrDefault(c => c.ProductId == id);
+        var foundCategory = await _appDbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
         if (foundCategory == null) return false;
-          _categories.Remove(foundCategory);
-          return true;
+        _appDbContext.Categories.Remove(foundCategory);
+        return true;
     }
 }

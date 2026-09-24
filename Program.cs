@@ -1,12 +1,17 @@
 
 using ecommerce.Controllers;
+using ecommerce.Data;
 using ecommerce.Interfaces;
 using ecommerce.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<ICategoryService,CategoryService>();
+
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.
+Configuration.GetConnectionString("DefaultConnection")));
 // builder.Services.AddControllers()
 // .ConfigureApiBehaviorOptions(options =>
 // {
@@ -47,18 +52,18 @@ app.UseHttpsRedirection();
 // {
 //     var newCategory = new Category
 //     {
-//         ProductId = Guid.NewGuid(),
+//         CategoryId = Guid.NewGuid(),
 //         Name = categoryData.Name,
 //         Description = categoryData.Description,
 //         CreatedAt = DateTime.UtcNow
 //     };
 //     categories.Add(newCategory);
-//     return Results.Created($"/api/categories/{newCategory.ProductId}",newCategory);
+//     return Results.Created($"/api/categories/{newCategory.CategoryId}",newCategory);
 // });
 
 // app.MapPut("/api/categories/{id}", (Guid id,Category categoryData) =>
 // {
-//     var foundCategory=categories.FirstOrDefault(c=>c.ProductId==id);
+//     var foundCategory=categories.FirstOrDefault(c=>c.CategoryId==id);
 //     if(foundCategory==null) return Results.NotFound();
 //     foundCategory.Name=categoryData.Name;
 //     return Results.NoContent();
@@ -66,7 +71,7 @@ app.UseHttpsRedirection();
 
 // app.MapDelete("/api/categories/{id}", (Guid id) =>
 // {
-//     var foundCategory=categories.FirstOrDefault(c=>c.ProductId==id);
+//     var foundCategory=categories.FirstOrDefault(c=>c.CategoryId==id);
 //     if(foundCategory==null) return Results.NotFound();
 //     categories.Remove(foundCategory);
 //     return Results.NoContent();

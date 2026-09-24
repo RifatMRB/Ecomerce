@@ -4,12 +4,12 @@ namespace ecommerce.Interfaces;
 
 public interface ICategoryService
 {
-    List<CategoryReadDto> GetAllcategories();
-    CategoryReadDto? GetCategorieById(Guid categoryId);
+    Task<List<CategoryReadDto>> GetAllcategories();
+    Task<CategoryReadDto?> GetCategorieById(Guid categoryId);
 
-    CategoryReadDto CreateCategorie(CategoryCreateDto categoryData);
+    Task<CategoryReadDto> CreateCategorie(CategoryCreateDto categoryData);
 
-    CategoryReadDto? UpdateCategory(Guid id, CategoryUpdateDto categoryData);
+    Task<CategoryReadDto?> UpdateCategory(Guid id, CategoryUpdateDto categoryData);
 
-    bool DeleteCategory(Guid id);
+    Task<bool> DeleteCategory(Guid id);
 }
